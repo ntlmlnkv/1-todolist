@@ -1,5 +1,6 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from "react";
 import { Button } from "./Button/Button";
+import styles from './Todolist.module.css'
 
 
 type TaskType = {
@@ -14,19 +15,24 @@ type PropsType = {
     removeTask: (taskID: number) => void
     filterTasks: (filterKey: string) => void
     addTask: (inputValue: string) => void
+    changeStatus: (taskID: number, eventStatus: boolean) => void
 }
 
 export function Todolist(props: PropsType) {
     let [inputValue, setInputValue] = useState('')
+    const [error, setError] = useState<string | null>(null)
 
     const addTaskHandler = () => {
-
-        props.addTask(inputValue)
-        setInputValue('')
+        if (inputValue.trim() !== '') {
+            props.addTask(inputValue.trim())
+            setInputValue('')
+        } else {
+            setError('Title is required')
+        }
     }
-
     const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         setInputValue(event.currentTarget.value)
+        setError(null)
 
     }
     const onKeyPressHandler = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -52,23 +58,33 @@ export function Todolist(props: PropsType) {
         <div>
             <h3>{props.title}</h3>
             <div>
-                <input value={inputValue} onChange={onChangeHandler} onKeyDown={onKeyPressHandler} />
+
+                <input
+                    className={error ? styles.error : ''}
+                    value={inputValue}
+                    onChange={onChangeHandler}
+                    onKeyDown={onKeyPressHandler}
+                />
+
+
                 {/* <input value={inputValue} onChange={(event) => setInputValue(event.currentTarget.value)} /> */}
                 {/* <button onClick={addTaskHandler}>+</button> */}
                 <Button name={'+'} callBack={addTaskHandler} />
             </div>
+            {error && <div className={styles.errorMessage}>{error}</div>}
             <ul>
                 {
                     props.tasks.map((el: TaskType) => {
                         const removeTaskHandler = () => {
                             props.removeTask(el.id)
                         }
-
+                        const changeStatusHandler = (event: ChangeEvent) => {
+                            props.changeStatus(el.id, el.isDone)
+                        }
                         return (
-                            <li key={el.id}>
+                            <li key={el.id} className={el.isDone ? styles.isDone : ''}>
                                 {/* <button onClick={removeTaskHandler} >X</button> */}
-                                <Button name={'X'} callBack={() => removeTaskHandler()} />
-                                <input type="checkbox" checked={el.isDone} />
+                                <input type="checkbox" checked={el.isDone} onChange={changeStatusHandler} />
                                 <span>{el.title}</span>
                             </li>
                         )

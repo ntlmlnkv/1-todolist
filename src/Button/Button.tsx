@@ -1,5 +1,5 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from "react";
-
+import styles from '../Todolist.module.css'
 
 type PropsType = {
     name: string
@@ -12,7 +12,7 @@ export const Button = (props: PropsType) => {
         props.callBack ()
     }
     return (
-        <button onClick={onClickHandler}>
+        <button onClick={onClickHandler} className={styles.activeFilter}>
 
             {props.name}
 

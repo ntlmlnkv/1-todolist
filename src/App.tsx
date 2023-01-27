@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import './App.css';
 import { Todolist } from './Todolist';
+export type FilterValuesType = "all" | "active" | "completed";
+
 
 function App() {
+
 
 
     let [tasks1, setTasks1] = useState([
@@ -13,13 +16,15 @@ function App() {
         { id: 5, title: "GraphQL", isDone: false },
 
     ])
-
+    const changeStatus = (taskID: number, eventStatus: boolean) => {
+        setTasks1( tasks1.map(el => el.id !== taskID ? {...el,isDone:eventStatus}: el))
+    }
     const addTask = (inputValue: string) => {
         const newTask = { id: 6, title: inputValue, isDone: false }
         setTasks1([newTask, ...tasks1])
     }
 
-    const [filterValueKey, setFilterVakueKey] = useState("All")
+    let [filterValueKey, setFilterVakueKey] = useState("All")
 
 
     const removeTask = (taskID: number) => {
@@ -51,6 +56,7 @@ function App() {
                 removeTask={removeTask}
                 filterTasks={filterTasks}
                 addTask={addTask}
+                changeStatus={changeStatus}
             />
         </div>
     );
